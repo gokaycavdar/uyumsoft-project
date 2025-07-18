@@ -10,6 +10,7 @@ export default function SignupPage() {
     email: '',
     password: '',
     confirmPassword: '',
+    deneme: '',
   });
   const [isLoading, setIsLoading] = useState(false);
 
