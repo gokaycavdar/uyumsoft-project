@@ -2,15 +2,17 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function SignupPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
-    deneme: '',
+    phone: '',
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -43,15 +45,15 @@ export default function SignupPage() {
           lastName: formData.lastName,
           email: formData.email,
           password: formData.password,
+          phone: formData.phone,
+          role: 'user'
         }),
       });
       
       if (response.ok) {
         const data = await response.json();
-        // Token'ı localStorage'a kaydet
-        localStorage.setItem('token', data.token);
-        // Dashboard'a yönlendir
-        window.location.href = '/dashboard';
+        // Registration successful, redirect to login
+        router.push('/login?message=Registration successful. Please login.');
       } else {
         const errorData = await response.json();
         alert(errorData.message || 'Registration failed');
@@ -134,6 +136,20 @@ export default function SignupPage() {
                 onChange={handleChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
                 placeholder="Enter your email"
+              />
+            </div>
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Phone Number <span className="text-gray-400">(Optional)</span>
+              </label>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={handleChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
+                placeholder="Enter your phone number"
               />
             </div>
             <div>

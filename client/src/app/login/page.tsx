@@ -37,8 +37,22 @@ export default function LoginPage() {
         const data = await response.json();
         // Token'ı localStorage'a kaydet
         localStorage.setItem('token', data.token);
-        // Dashboard'a yönlendir (daha iyi yöntem)
-        router.push('/dashboard');
+        localStorage.setItem('userRole', data.user.role);
+        localStorage.setItem('userInfo', JSON.stringify(data.user));
+        
+        // Role'e göre yönlendirme
+        switch (data.user.role) {
+          case 'admin':
+            router.push('/admin');
+            break;
+          case 'provider':
+            router.push('/provider');
+            break;
+          case 'user':
+          default:
+            router.push('/dashboard');
+            break;
+        }
       } else {
         alert('Invalid credentials');
       }
