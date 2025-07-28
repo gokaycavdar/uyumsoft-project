@@ -35,7 +35,7 @@ export default function SignupPage() {
     
     try {
       // C# API'ye çağrı yapılacak
-      const response = await fetch('https://localhost:7000/api/auth/register', {
+      const response = await fetch('http://localhost:7000/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ export default function SignupPage() {
       if (response.ok) {
         const data = await response.json();
         // Registration successful, redirect to login
-        router.push('/login?message=Registration successful. Please login.');
+        router.replace('/login?message=Registration successful. Please login.');
       } else {
         const errorData = await response.json();
         alert(errorData.message || 'Registration failed');

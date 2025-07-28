@@ -24,8 +24,9 @@ export default function LoginPage() {
     setIsLoading(true);
     
     try {
-      // C# API'ye çağrı yapılacak
-      const response = await fetch('https://localhost:7000/api/auth/login', {
+      console.log('🔄 Login denemesi:', formData);
+      
+      const response = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -33,32 +34,68 @@ export default function LoginPage() {
         body: JSON.stringify(formData),
       });
       
-      if (response.ok) {
-        const data = await response.json();
-        // Token'ı localStorage'a kaydet
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('userRole', data.user.role);
-        localStorage.setItem('userInfo', JSON.stringify(data.user));
+      console.log('📨 Response alındı:', {
+        status: response.status,
+        ok: response.ok,
+        headers: response.headers
+      });
+      
+      // Response'u text olarak al, sonra parse et
+      const responseText = await response.text();
+      console.log('📄 Response text:', responseText);
+      
+      let data;
+      try {
+        data = JSON.parse(responseText);
+        console.log('📦 Parsed data:', data);
+      } catch (parseError) {
+        console.error('❌ JSON parse hatası:', parseError);
+        alert('Sunucudan geçersiz response geldi');
+        return;
+      }
+      
+      if (response.ok && data) {
+        console.log('✅ Login başarılı!', data);
         
-        // Role'e göre yönlendirme
-        switch (data.user.role) {
-          case 'admin':
-            router.push('/admin');
-            break;
-          case 'provider':
-            router.push('/provider');
-            break;
-          case 'user':
-          default:
-            router.push('/dashboard');
-            break;
+        if (data.token && data.user) {
+          // Token'ı localStorage'a kaydet
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('userRole', data.user.role);
+          localStorage.setItem('userInfo', JSON.stringify(data.user));
+          
+          console.log('💾 LocalStorage\'a kaydedildi');
+          console.log('🎯 Role:', data.user.role);
+          
+          // Role'e göre yönlendirme
+          const userRole = data.user.role.toLowerCase();
+          console.log('🚀 Yönlendiriliyor:', userRole);
+          
+          switch (userRole) {
+            case 'admin':
+              console.log('👑 Admin sayfasına gidiyor...');
+              router.replace('/admin');
+              break;
+            case 'provider':
+              console.log('🏢 Provider sayfasına gidiyor...');
+              router.replace('/provider');
+              break;
+            case 'user':
+            default:
+              console.log('👤 Dashboard\'a gidiyor...');
+              router.replace('/dashboard');
+              break;
+          }
+        } else {
+          console.error('❌ Token veya user bilgisi eksik:', data);
+          alert('Giriş bilgileri eksik!');
         }
       } else {
-        alert('Invalid credentials');
+        console.log('❌ Response başarısız:', response.status, data);
+        alert(data?.message || 'Giriş başarısız!');
       }
     } catch (error) {
-      console.error('Login error:', error);
-      alert('Login failed');
+      console.error('💥 Login error:', error);
+      alert('Bağlantı hatası: ' + error);
     } finally {
       setIsLoading(false);
     }

@@ -1,144 +1,242 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using server.Data;
+using server.Models.DTOs.Auth;
+using server.Models.Entities;
+using server.Models.Enum;
 
-namespace server.Controllers
+[ApiController]
+[Route("api/auth")]
+public class AuthController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    private readonly ApplicationDbContext _context;
+    private readonly IConfiguration _configuration;
+
+    public AuthController(ApplicationDbContext context, IConfiguration configuration)
     {
-        private readonly IConfiguration _configuration;
-        private readonly ILogger<AuthController> _logger;
+        _context = context;
+        _configuration = configuration;
+    }
 
-        public AuthController(IConfiguration configuration, ILogger<AuthController> logger)
+    // ✅ CORS Test Endpoint'i
+    [HttpGet("ping")]
+    public IActionResult Ping()
+    {
+        return Ok(new { 
+            message = "Backend çalışıyor!", 
+            timestamp = DateTime.UtcNow,
+            cors = "OK"
+        });
+    }
+
+    // ✅ Kullanıcıları listele
+    [HttpGet("users")]
+    public async Task<IActionResult> GetAllUsers()
+    {
+        try
         {
-            _configuration = configuration;
-            _logger = logger;
+            var users = await _context.Users.Select(u => new { 
+                u.Id,
+                u.Email, 
+                u.FullName, 
+                Role = u.Role.ToString(),
+                RoleValue = (int)u.Role,
+                u.CreatedAt
+            }).ToListAsync();
+            
+            return Ok(new {
+                message = "Tüm kullanıcılar",
+                count = users.Count(),
+                users = users
+            });
         }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        catch (Exception ex)
         {
-            try
-            {
-                // TODO: Database'den user doğrulaması yapılacak
-                // Şimdilik hardcoded test users
-                var testUsers = new[]
-                {
-                    new { Email = "admin@test.com", Password = "123456", Role = "admin", FirstName = "Admin", LastName = "User", Id = 1 },
-                    new { Email = "provider@test.com", Password = "123456", Role = "provider", FirstName = "Provider", LastName = "User", Id = 2 },
-                    new { Email = "user@test.com", Password = "123456", Role = "user", FirstName = "Test", LastName = "User", Id = 3 }
-                };
+            return StatusCode(500, new { message = "Kullanıcılar getirilemedi!", error = ex.Message });
+        }
+    }
 
-                var user = testUsers.FirstOrDefault(u => u.Email == request.Email && u.Password == request.Password);
-                
-                if (user == null)
-                {
-                    return Unauthorized(new { message = "Invalid credentials" });
+    // ✅ Provider hesabı oluştur
+    [HttpPost("create-provider")]
+    public async Task<IActionResult> CreateProvider()
+    {
+        try
+        {
+            // Provider hesabı var mı kontrol et
+            if (await _context.Users.AnyAsync(u => u.Email == "provider@test.com"))
+            {
+                return BadRequest(new { message = "Provider hesabı zaten var!" });
+            }
+            
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword("123456");
+            
+            var provider = new User
+            {
+                FullName = "Provider Test",
+                Email = "provider@test.com",
+                PasswordHash = hashedPassword,
+                Role = UserRole.Provider,
+                CreatedAt = DateTime.UtcNow
+            };
+            
+            _context.Users.Add(provider);
+            await _context.SaveChangesAsync();
+            
+            return Ok(new { 
+                message = "Provider hesabı oluşturuldu!",
+                user = new {
+                    provider.Id,
+                    provider.Email,
+                    provider.FullName,
+                    Role = provider.Role.ToString()
                 }
-
-                // JWT Token oluştur
-                var token = GenerateJwtToken(user.Id, user.Email, user.Role);
-
-                return Ok(new LoginResponse
-                {
-                    Token = token,
-                    User = new UserInfo
-                    {
-                        Id = user.Id,
-                        Email = user.Email,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Role = user.Role
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Login error");
-                return StatusCode(500, new { message = "Internal server error" });
-            }
+            });
         }
-
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+        catch (Exception ex)
         {
-            try
-            {
-                // TODO: Database'e user kaydı yapılacak
-                // TODO: Email validation
-                // TODO: Password hashing
-
-                // Şimdilik basit response
-                _logger.LogInformation($"New user registration: {request.Email}");
-
-                return Ok(new { message = "Registration successful. Please login." });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Registration error");
-                return StatusCode(500, new { message = "Registration failed" });
-            }
+            return StatusCode(500, new { message = "Provider oluşturulamadı!", error = ex.Message });
         }
+    }
 
-        private string GenerateJwtToken(int userId, string email, string role)
+    // ✅ OPTIONS Support
+    [HttpOptions("login")]
+    public IActionResult LoginOptions()
+    {
+        return Ok();
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
+    {
+        try
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"] ?? "default-secret-key-for-development-only"));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[]
+            // Email unique kontrolü
+            if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
             {
-                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-                new Claim(ClaimTypes.Email, email),
-                new Claim(ClaimTypes.Role, role),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                return BadRequest(new { message = "Bu email adresi zaten kayıtlı!" });
+            }
+
+            // Yeni kullanıcı oluştur
+            var user = new User
+            {
+                FullName = registerDto.FullName,
+                Email = registerDto.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
+                Role = UserRole.User,
+                CreatedAt = DateTime.UtcNow
             };
 
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"] ?? "EnerjiMetre",
-                audience: _configuration["Jwt:Audience"] ?? "EnerjiMetre",
-                claims: claims,
-                expires: DateTime.Now.AddDays(7),
-                signingCredentials: credentials
-            );
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            // Token oluştur
+            var token = GenerateJwtToken(user);
+
+            return Ok(new AuthResponseDto
+            {
+                Token = token,
+                User = new UserDto
+                {
+                    Id = user.Id,
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    Role = user.Role.ToString()
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Kayıt sırasında hata oluştu!", error = ex.Message });
         }
     }
 
-    // Request/Response Models
-    public class LoginRequest
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
+        try
+        {
+            // Kullanıcıyı bul
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == loginDto.Email);
+
+            if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
+            {
+                return Unauthorized(new { message = "Email veya şifre hatalı!" });
+            }
+
+            // Token oluştur
+            var token = GenerateJwtToken(user);
+
+            return Ok(new AuthResponseDto
+            {
+                Token = token,
+                User = new UserDto
+                {
+                    Id = user.Id,
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    Role = user.Role.ToString()
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Giriş sırasında hata oluştu!", error = ex.Message });
+        }
     }
 
-    public class RegisterRequest
+    private string GenerateJwtToken(User user)
     {
-        public string FirstName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        public string Phone { get; set; } = string.Empty;
-        public string Role { get; set; } = "user";
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? ""));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Name, user.FullName),
+            new Claim(ClaimTypes.Role, user.Role.ToString())
+        };
+
+        var token = new JwtSecurityToken(
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.Now.AddDays(7),
+            signingCredentials: creds
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public class LoginResponse
+    [HttpGet("test")]
+    public async Task<IActionResult> Test()
     {
-        public string Token { get; set; } = string.Empty;
-        public UserInfo User { get; set; } = new UserInfo();
+        try
+        {
+            var userCount = await _context.Users.CountAsync();
+            var testUser = await _context.Users.FirstAsync();
+            
+            return Ok(new { 
+                message = "API çalışıyor!", 
+                userCount = userCount,
+                testUser = new { testUser.Email, testUser.FullName }
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = ex.Message });
+        }
     }
 
-    public class UserInfo
+    [HttpPost("test-login")]
+    public async Task<IActionResult> TestLogin([FromBody] object data)
     {
-        public int Id { get; set; }
-        public string Email { get; set; } = string.Empty;
-        public string FirstName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
-        public string Role { get; set; } = string.Empty;
+        Console.WriteLine($"POST isteği geldi: {data}");
+        return Ok(new { message = "POST isteği başarılı!", receivedData = data });
     }
 }
