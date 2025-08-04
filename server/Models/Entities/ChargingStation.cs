@@ -4,7 +4,8 @@
 {
     public int Id { get; set; }
     public string Location { get; set; }
-
+    public double Latitude { get; set; }  // ← Ekle
+    public double Longitude { get; set; } // ← Ekle
     public int ProviderId { get; set; }
 
     // Navigation Properties

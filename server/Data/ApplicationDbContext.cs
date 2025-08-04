@@ -127,24 +127,49 @@ namespace server.Data
                 {
                     Id = 1,
                     Location = "Ankara Çankaya - Kızılay Metro Çıkışı",
+                    Latitude = 39.9208,
+                    Longitude = 32.8541,
                     ProviderId = 1
                 },
                 new ChargingStation
                 {
                     Id = 2,
                     Location = "İstanbul Levent - Metro AVM Otoparkı",
+                    Latitude = 41.0766,
+                    Longitude = 29.0124,
                     ProviderId = 1
                 },
                 new ChargingStation
                 {
                     Id = 3,
                     Location = "İzmir Konak - Alsancak Garı",
+                    Latitude = 38.4237,
+                    Longitude = 27.1428,
                     ProviderId = 1
                 },
                 new ChargingStation
                 {
                     Id = 4,
                     Location = "Bursa Osmangazi - Şehir Hastanesi",
+                    Latitude = 40.1826,
+                    Longitude = 29.0670,
+                    ProviderId = 1
+                },
+                // Ankara'ya daha yakın istasyonlar ekle (map'te görmek için)
+                new ChargingStation
+                {
+                    Id = 5,
+                    Location = "Ankara Ümitköy - Metro İstasyonu",
+                    Latitude = 39.8719,
+                    Longitude = 32.8105,
+                    ProviderId = 1
+                },
+                new ChargingStation
+                {
+                    Id = 6,
+                    Location = "Ankara Çayyolu - Metro İstasyonu",
+                    Latitude = 39.8547,
+                    Longitude = 32.7319,
                     ProviderId = 1
                 }
             );

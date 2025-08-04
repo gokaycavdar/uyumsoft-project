@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using server.Data;
@@ -11,9 +12,11 @@ using server.Data;
 namespace server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250804072118_AddCoordinatesToChargingStation")]
+    partial class AddCoordinatesToChargingStation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -148,49 +151,33 @@ namespace server.Migrations
                         new
                         {
                             Id = 1,
-                            Latitude = 39.9208,
+                            Latitude = 0.0,
                             Location = "Ankara Çankaya - Kızılay Metro Çıkışı",
-                            Longitude = 32.854100000000003,
+                            Longitude = 0.0,
                             ProviderId = 1
                         },
                         new
                         {
                             Id = 2,
-                            Latitude = 41.076599999999999,
+                            Latitude = 0.0,
                             Location = "İstanbul Levent - Metro AVM Otoparkı",
-                            Longitude = 29.0124,
+                            Longitude = 0.0,
                             ProviderId = 1
                         },
                         new
                         {
                             Id = 3,
-                            Latitude = 38.423699999999997,
+                            Latitude = 0.0,
                             Location = "İzmir Konak - Alsancak Garı",
-                            Longitude = 27.142800000000001,
+                            Longitude = 0.0,
                             ProviderId = 1
                         },
                         new
                         {
                             Id = 4,
-                            Latitude = 40.182600000000001,
+                            Latitude = 0.0,
                             Location = "Bursa Osmangazi - Şehir Hastanesi",
-                            Longitude = 29.067,
-                            ProviderId = 1
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Latitude = 39.871899999999997,
-                            Location = "Ankara Ümitköy - Metro İstasyonu",
-                            Longitude = 32.810499999999998,
-                            ProviderId = 1
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Latitude = 39.854700000000001,
-                            Location = "Ankara Çayyolu - Metro İstasyonu",
-                            Longitude = 32.731900000000003,
+                            Longitude = 0.0,
                             ProviderId = 1
                         });
                 });
@@ -357,7 +344,7 @@ namespace server.Migrations
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@energimetre.com",
                             FullName = "Admin User",
-                            PasswordHash = "$2a$11$e2PZO9AiQRoMn.IQm/eRJu1p88YV6SDLK7Id6c2O9ZV7xbb5un6pG",
+                            PasswordHash = "$2a$11$fKA5Id6z4o6FSxafXAS9UOIw8GE8fQL1mflwc54ToxY/xZR.371om",
                             Role = 1
                         },
                         new
@@ -366,7 +353,7 @@ namespace server.Migrations
                             CreatedAt = new DateTime(2024, 1, 2, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "ahmet@test.com",
                             FullName = "Ahmet Yılmaz",
-                            PasswordHash = "$2a$11$Hvu6YgBCMWEekIhP0DmPa.Pj8s6LiL7338dZTAx0q3WTFfB5CBxV2",
+                            PasswordHash = "$2a$11$vCbHsQLl8K0ViADDMo9DkeJRiKPvAVlQzV3FOFgZn1gwAfeLHMbMy",
                             Role = 0
                         },
                         new
@@ -375,7 +362,7 @@ namespace server.Migrations
                             CreatedAt = new DateTime(2024, 1, 3, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "mehmet@test.com",
                             FullName = "Mehmet Demir",
-                            PasswordHash = "$2a$11$tTZnc.7Ldln5fhLeLhj6juxGf9GTzVyAXh3DfLn3XEYzuXC7z5M0y",
+                            PasswordHash = "$2a$11$paucstNPhkFCpkGES5wYXeifjRXv5Eq/R7LqZwu.KoBlOis/7P87q",
                             Role = 2
                         },
                         new
@@ -384,7 +371,7 @@ namespace server.Migrations
                             CreatedAt = new DateTime(2024, 1, 4, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "zeynep@test.com",
                             FullName = "Zeynep Kaya",
-                            PasswordHash = "$2a$11$tN3sBMxugRa8xJs7IDlVy.XOrGzfhexoDuE7E29Nysru1o1falXfi",
+                            PasswordHash = "$2a$11$oBR8jdAuvUa6AQHMSeJ53.2Ki45cvS32er7HvJ4FJGOqb7kJD6jjC",
                             Role = 0
                         });
                 });

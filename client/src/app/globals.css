@@ -27,3 +27,15 @@ body {
   font-feature-settings: 'liga' 1, 'calt' 1;
   letter-spacing: -0.02em;
 }
+
+/* Leaflet CSS */
+@import "leaflet/dist/leaflet.css";
+
+/* Custom marker styles */
+.leaflet-popup-content {
+  margin: 8px 12px !important;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 8px !important;
+}

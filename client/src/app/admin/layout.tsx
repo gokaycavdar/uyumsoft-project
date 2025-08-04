@@ -52,15 +52,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       ),
     },
     {
-      name: 'Station Management',
-      href: '/admin/station-management',
-      icon: (
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-      ),
-    },
-    {
       name: 'Admin Logs',
       href: '/admin/admin-logs',
       icon: (
