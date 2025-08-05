@@ -12,8 +12,8 @@ using server.Data;
 namespace server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250804072726_AddCoordinatesToChargingStationWithSeedData")]
-    partial class AddCoordinatesToChargingStationWithSeedData
+    [Migration("20250805002904_UpdateAdminLogNavigation")]
+    partial class UpdateAdminLogNavigation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,7 +40,7 @@ namespace server.Migrations
                     b.Property<int>("AdminId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("Timestamp")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -48,22 +48,6 @@ namespace server.Migrations
                     b.HasIndex("AdminId");
 
                     b.ToTable("AdminLogs");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Action = "Created provider: Türkiye Elektrik Şarj A.Ş.",
-                            AdminId = 1,
-                            Timestamp = new DateTime(2024, 1, 3, 9, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Action = "Added charging station: Ankara Çankaya - Kızılay Metro Çıkışı",
-                            AdminId = 1,
-                            Timestamp = new DateTime(2024, 1, 3, 9, 30, 0, 0, DateTimeKind.Utc)
-                        });
                 });
 
             modelBuilder.Entity("server.Models.Entities.ChargingSession", b =>
@@ -98,26 +82,6 @@ namespace server.Migrations
                     b.HasIndex("VehicleId");
 
                     b.ToTable("ChargingSessions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ChargingStationId = 1,
-                            EndTime = new DateTime(2024, 1, 15, 15, 45, 0, 0, DateTimeKind.Utc),
-                            StartTime = new DateTime(2024, 1, 15, 14, 30, 0, 0, DateTimeKind.Utc),
-                            UserId = 2,
-                            VehicleId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ChargingStationId = 2,
-                            EndTime = new DateTime(2024, 1, 16, 11, 0, 0, 0, DateTimeKind.Utc),
-                            StartTime = new DateTime(2024, 1, 16, 10, 15, 0, 0, DateTimeKind.Utc),
-                            UserId = 4,
-                            VehicleId = 2
-                        });
                 });
 
             modelBuilder.Entity("server.Models.Entities.ChargingStation", b =>
@@ -151,50 +115,194 @@ namespace server.Migrations
                         new
                         {
                             Id = 1,
-                            Latitude = 39.9208,
-                            Location = "Ankara Çankaya - Kızılay Metro Çıkışı",
-                            Longitude = 32.854100000000003,
+                            Latitude = 41.036900000000003,
+                            Location = "İstanbul Taksim Meydanı",
+                            Longitude = 28.984999999999999,
                             ProviderId = 1
                         },
                         new
                         {
                             Id = 2,
-                            Latitude = 41.076599999999999,
-                            Location = "İstanbul Levent - Metro AVM Otoparkı",
-                            Longitude = 29.0124,
+                            Latitude = 40.990000000000002,
+                            Location = "İstanbul Kadıköy İskelesi",
+                            Longitude = 29.02,
                             ProviderId = 1
                         },
                         new
                         {
                             Id = 3,
-                            Latitude = 38.423699999999997,
-                            Location = "İzmir Konak - Alsancak Garı",
-                            Longitude = 27.142800000000001,
-                            ProviderId = 1
+                            Latitude = 41.076599999999999,
+                            Location = "İstanbul Levent Metro",
+                            Longitude = 29.014199999999999,
+                            ProviderId = 2
                         },
                         new
                         {
                             Id = 4,
-                            Latitude = 40.182600000000001,
-                            Location = "Bursa Osmangazi - Şehir Hastanesi",
-                            Longitude = 29.067,
-                            ProviderId = 1
+                            Latitude = 40.898600000000002,
+                            Location = "İstanbul Sabiha Gökçen Havalimanı",
+                            Longitude = 29.309699999999999,
+                            ProviderId = 5
                         },
                         new
                         {
                             Id = 5,
-                            Latitude = 39.871899999999997,
-                            Location = "Ankara Ümitköy - Metro İstasyonu",
-                            Longitude = 32.810499999999998,
-                            ProviderId = 1
+                            Latitude = 41.058100000000003,
+                            Location = "İstanbul Şişli Cevahir AVM",
+                            Longitude = 28.9833,
+                            ProviderId = 4
                         },
                         new
                         {
                             Id = 6,
-                            Latitude = 39.854700000000001,
-                            Location = "Ankara Çayyolu - Metro İstasyonu",
-                            Longitude = 32.731900000000003,
+                            Latitude = 41.0839,
+                            Location = "İstanbul Fatih Sultan Mehmet Köprüsü",
+                            Longitude = 29.037500000000001,
+                            ProviderId = 3
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Latitude = 39.9208,
+                            Location = "Ankara Kızılay",
+                            Longitude = 32.854100000000003,
                             ProviderId = 1
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Latitude = 40.128100000000003,
+                            Location = "Ankara Esenboğa Havalimanı",
+                            Longitude = 32.995100000000001,
+                            ProviderId = 4
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Latitude = 39.909999999999997,
+                            Location = "Ankara Tunalı Hilmi",
+                            Longitude = 32.859999999999999,
+                            ProviderId = 2
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Latitude = 39.950000000000003,
+                            Location = "Ankara Atatürk Orman Çiftliği",
+                            Longitude = 32.883299999999998,
+                            ProviderId = 3
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Latitude = 38.418900000000001,
+                            Location = "İzmir Konak Meydanı",
+                            Longitude = 27.128699999999998,
+                            ProviderId = 2
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Latitude = 38.4392,
+                            Location = "İzmir Alsancak Limanı",
+                            Longitude = 27.137,
+                            ProviderId = 1
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Latitude = 38.292400000000001,
+                            Location = "İzmir Adnan Menderes Havalimanı",
+                            Longitude = 27.157,
+                            ProviderId = 5
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Latitude = 38.450000000000003,
+                            Location = "İzmir Forum Bornova",
+                            Longitude = 27.216699999999999,
+                            ProviderId = 1
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Latitude = 36.884099999999997,
+                            Location = "Antalya Kaleiçi",
+                            Longitude = 30.7056,
+                            ProviderId = 3
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Latitude = 40.188499999999998,
+                            Location = "Bursa Ulus",
+                            Longitude = 29.061,
+                            ProviderId = 4
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Latitude = 37.0,
+                            Location = "Adana Merkez Park",
+                            Longitude = 35.321300000000001,
+                            ProviderId = 1
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Latitude = 37.066200000000002,
+                            Location = "Gaziantep Şahinbey",
+                            Longitude = 37.383299999999998,
+                            ProviderId = 2
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Latitude = 37.866700000000002,
+                            Location = "Konya Meram",
+                            Longitude = 32.4833,
+                            ProviderId = 3
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Latitude = 39.776699999999998,
+                            Location = "Eskişehir Odunpazarı",
+                            Longitude = 30.520600000000002,
+                            ProviderId = 5
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Latitude = 41.0015,
+                            Location = "Trabzon Ortahisar",
+                            Longitude = 39.717799999999997,
+                            ProviderId = 6
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Latitude = 37.914400000000001,
+                            Location = "Diyarbakır Sur",
+                            Longitude = 40.230600000000003,
+                            ProviderId = 2
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Latitude = 41.286700000000003,
+                            Location = "Samsun İlkadım",
+                            Longitude = 36.329999999999998,
+                            ProviderId = 3
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Latitude = 37.776499999999999,
+                            Location = "Denizli Pamukkale",
+                            Longitude = 29.086400000000001,
+                            ProviderId = 4
                         });
                 });
 
@@ -230,13 +338,13 @@ namespace server.Migrations
                         new
                         {
                             Id = 2,
-                            ChargingStationId = 2,
-                            UserId = 4
+                            ChargingStationId = 7,
+                            UserId = 2
                         },
                         new
                         {
                             Id = 3,
-                            ChargingStationId = 3,
+                            ChargingStationId = 11,
                             UserId = 2
                         });
                 });
@@ -261,20 +369,6 @@ namespace server.Migrations
                         .IsUnique();
 
                     b.ToTable("Invoices");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Amount = 187.50m,
-                            ChargingSessionId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Amount = 112.50m,
-                            ChargingSessionId = 2
-                        });
                 });
 
             modelBuilder.Entity("server.Models.Entities.Provider", b =>
@@ -311,10 +405,50 @@ namespace server.Migrations
                         new
                         {
                             Id = 1,
-                            ContactInfo = "info@turkiyeelektrik.com | 0312 555 0123",
-                            Name = "Türkiye Elektrik Şarj A.Ş.",
+                            ContactInfo = "ttenerji@provider.com",
+                            Name = "Türk Telekom Enerji",
                             PricePerMinute = 2.50m,
                             UserId = 3
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ContactInfo = "aksa@provider.com",
+                            Name = "Aksa Enerji",
+                            PricePerMinute = 2.25m,
+                            UserId = 4
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ContactInfo = "zorlu@provider.com",
+                            Name = "Zorlu Enerji",
+                            PricePerMinute = 2.75m,
+                            UserId = 5
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ContactInfo = "enerjisa@provider.com",
+                            Name = "Enerjisa",
+                            PricePerMinute = 2.40m,
+                            UserId = 6
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ContactInfo = "shell@provider.com",
+                            Name = "Shell Recharge",
+                            PricePerMinute = 3.00m,
+                            UserId = 7
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ContactInfo = "po@provider.com",
+                            Name = "Petrol Ofisi Charge",
+                            PricePerMinute = 2.80m,
+                            UserId = 8
                         });
                 });
 
@@ -358,37 +492,73 @@ namespace server.Migrations
                         {
                             Id = 1,
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "admin@energimetre.com",
+                            Email = "admin@test.com",
                             FullName = "Admin User",
-                            PasswordHash = "$2a$11$e2PZO9AiQRoMn.IQm/eRJu1p88YV6SDLK7Id6c2O9ZV7xbb5un6pG",
+                            PasswordHash = "$2a$11$gG/BhmbytkW5upHV0e.woehf3juy0X4NbXYDs5OOfv5HpMYg5ezdO",
                             Role = 1
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 1, 2, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "ahmet@test.com",
-                            FullName = "Ahmet Yılmaz",
-                            PasswordHash = "$2a$11$Hvu6YgBCMWEekIhP0DmPa.Pj8s6LiL7338dZTAx0q3WTFfB5CBxV2",
+                            CreatedAt = new DateTime(2024, 1, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "user@test.com",
+                            FullName = "Test User",
+                            PasswordHash = "$2a$11$OxSxEg2ZSXLRH3UL1gQBEOGcybiSBCeFCLDY4kvrJqe9iU9.J6qTy",
                             Role = 0
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2024, 1, 3, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "mehmet@test.com",
-                            FullName = "Mehmet Demir",
-                            PasswordHash = "$2a$11$tTZnc.7Ldln5fhLeLhj6juxGf9GTzVyAXh3DfLn3XEYzuXC7z5M0y",
+                            CreatedAt = new DateTime(2024, 1, 2, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "ttenerji@provider.com",
+                            FullName = "Türk Telekom Enerji",
+                            PasswordHash = "$2a$11$OOfJtdJQ.eN8yn1ZpAWNbeKd57eQC7mq.JZyEm2pP.1pIgNKNYDxG",
                             Role = 2
                         },
                         new
                         {
                             Id = 4,
+                            CreatedAt = new DateTime(2024, 1, 3, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "aksa@provider.com",
+                            FullName = "Aksa Enerji",
+                            PasswordHash = "$2a$11$87HUT1Kj9iNkWEMgyFzXOOytkG7dQMgo/DfgWS8X1NVcLQE5SQA5C",
+                            Role = 2
+                        },
+                        new
+                        {
+                            Id = 5,
                             CreatedAt = new DateTime(2024, 1, 4, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "zeynep@test.com",
-                            FullName = "Zeynep Kaya",
-                            PasswordHash = "$2a$11$tN3sBMxugRa8xJs7IDlVy.XOrGzfhexoDuE7E29Nysru1o1falXfi",
-                            Role = 0
+                            Email = "zorlu@provider.com",
+                            FullName = "Zorlu Enerji",
+                            PasswordHash = "$2a$11$TKwXeDmTIoXoekmriWOqvu5DELwxn4ocuy/3qBFGx55EFxeiAyjka",
+                            Role = 2
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2024, 1, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "enerjisa@provider.com",
+                            FullName = "Enerjisa",
+                            PasswordHash = "$2a$11$MCbsEnE/ajdvcAHOV/86tOghfcj03x6SpIbXyhnX2UrAhWUIHZJri",
+                            Role = 2
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2024, 1, 6, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "shell@provider.com",
+                            FullName = "Shell Recharge",
+                            PasswordHash = "$2a$11$mv4/yHrMcFbYLF80m0PIx.AEc6zzEgt16TsqhLe1Wf/rtVcoF3FK.",
+                            Role = 2
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(2024, 1, 7, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "po@provider.com",
+                            FullName = "Petrol Ofisi Charge",
+                            PasswordHash = "$2a$11$iHHC.D8TAwrE5jDQz67pnOWfLk03C2vivh8pYl6pn.eIrOtJ5YcJK",
+                            Role = 2
                         });
                 });
 
@@ -420,24 +590,6 @@ namespace server.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserComments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ChargingStationId = 1,
-                            Comment = "Çok hızlı şarj oluyor, lokasyon mükemmel!",
-                            CreatedAt = new DateTime(2024, 1, 15, 16, 0, 0, 0, DateTimeKind.Utc),
-                            UserId = 2
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ChargingStationId = 2,
-                            Comment = "AVM'nin içinde olması çok pratik. Alışveriş yaparken şarj oluyor.",
-                            CreatedAt = new DateTime(2024, 1, 16, 11, 30, 0, 0, DateTimeKind.Utc),
-                            UserId = 4
-                        });
                 });
 
             modelBuilder.Entity("server.Models.Entities.Vehicle", b =>
@@ -477,14 +629,6 @@ namespace server.Migrations
                             Model = "Model 3",
                             PlateNumber = "34 ABC 123",
                             UserId = 2
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Make = "BMW",
-                            Model = "iX3",
-                            PlateNumber = "06 DEF 456",
-                            UserId = 4
                         });
                 });
 

@@ -12,8 +12,8 @@ using server.Data;
 namespace server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250804072118_AddCoordinatesToChargingStation")]
-    partial class AddCoordinatesToChargingStation
+    [Migration("20250805005102_deneme")]
+    partial class deneme
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,35 +35,17 @@ namespace server.Migrations
 
                     b.Property<string>("Action")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
-                    b.Property<int>("AdminId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("NOW()");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AdminId");
-
                     b.ToTable("AdminLogs");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Action = "Created provider: Türkiye Elektrik Şarj A.Ş.",
-                            AdminId = 1,
-                            Timestamp = new DateTime(2024, 1, 3, 9, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Action = "Added charging station: Ankara Çankaya - Kızılay Metro Çıkışı",
-                            AdminId = 1,
-                            Timestamp = new DateTime(2024, 1, 3, 9, 30, 0, 0, DateTimeKind.Utc)
-                        });
                 });
 
             modelBuilder.Entity("server.Models.Entities.ChargingSession", b =>
@@ -98,26 +80,6 @@ namespace server.Migrations
                     b.HasIndex("VehicleId");
 
                     b.ToTable("ChargingSessions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ChargingStationId = 1,
-                            EndTime = new DateTime(2024, 1, 15, 15, 45, 0, 0, DateTimeKind.Utc),
-                            StartTime = new DateTime(2024, 1, 15, 14, 30, 0, 0, DateTimeKind.Utc),
-                            UserId = 2,
-                            VehicleId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ChargingStationId = 2,
-                            EndTime = new DateTime(2024, 1, 16, 11, 0, 0, 0, DateTimeKind.Utc),
-                            StartTime = new DateTime(2024, 1, 16, 10, 15, 0, 0, DateTimeKind.Utc),
-                            UserId = 4,
-                            VehicleId = 2
-                        });
                 });
 
             modelBuilder.Entity("server.Models.Entities.ChargingStation", b =>
@@ -146,40 +108,6 @@ namespace server.Migrations
                     b.HasIndex("ProviderId");
 
                     b.ToTable("ChargingStations");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Latitude = 0.0,
-                            Location = "Ankara Çankaya - Kızılay Metro Çıkışı",
-                            Longitude = 0.0,
-                            ProviderId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Latitude = 0.0,
-                            Location = "İstanbul Levent - Metro AVM Otoparkı",
-                            Longitude = 0.0,
-                            ProviderId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Latitude = 0.0,
-                            Location = "İzmir Konak - Alsancak Garı",
-                            Longitude = 0.0,
-                            ProviderId = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Latitude = 0.0,
-                            Location = "Bursa Osmangazi - Şehir Hastanesi",
-                            Longitude = 0.0,
-                            ProviderId = 1
-                        });
                 });
 
             modelBuilder.Entity("server.Models.Entities.FavoriteStation", b =>
@@ -203,26 +131,6 @@ namespace server.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("FavoriteStations");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ChargingStationId = 1,
-                            UserId = 2
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ChargingStationId = 2,
-                            UserId = 4
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ChargingStationId = 3,
-                            UserId = 2
-                        });
                 });
 
             modelBuilder.Entity("server.Models.Entities.Invoice", b =>
@@ -245,20 +153,6 @@ namespace server.Migrations
                         .IsUnique();
 
                     b.ToTable("Invoices");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Amount = 187.50m,
-                            ChargingSessionId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Amount = 112.50m,
-                            ChargingSessionId = 2
-                        });
                 });
 
             modelBuilder.Entity("server.Models.Entities.Provider", b =>
@@ -278,8 +172,7 @@ namespace server.Migrations
                         .HasColumnType("text");
 
                     b.Property<decimal>("PricePerMinute")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("numeric(10,2)");
+                        .HasColumnType("numeric");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -290,16 +183,6 @@ namespace server.Migrations
                         .IsUnique();
 
                     b.ToTable("Providers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ContactInfo = "info@turkiyeelektrik.com | 0312 555 0123",
-                            Name = "Türkiye Elektrik Şarj A.Ş.",
-                            PricePerMinute = 2.50m,
-                            UserId = 3
-                        });
                 });
 
             modelBuilder.Entity("server.Models.Entities.User", b =>
@@ -332,48 +215,7 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "admin@energimetre.com",
-                            FullName = "Admin User",
-                            PasswordHash = "$2a$11$fKA5Id6z4o6FSxafXAS9UOIw8GE8fQL1mflwc54ToxY/xZR.371om",
-                            Role = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2024, 1, 2, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "ahmet@test.com",
-                            FullName = "Ahmet Yılmaz",
-                            PasswordHash = "$2a$11$vCbHsQLl8K0ViADDMo9DkeJRiKPvAVlQzV3FOFgZn1gwAfeLHMbMy",
-                            Role = 0
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2024, 1, 3, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "mehmet@test.com",
-                            FullName = "Mehmet Demir",
-                            PasswordHash = "$2a$11$paucstNPhkFCpkGES5wYXeifjRXv5Eq/R7LqZwu.KoBlOis/7P87q",
-                            Role = 2
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedAt = new DateTime(2024, 1, 4, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "zeynep@test.com",
-                            FullName = "Zeynep Kaya",
-                            PasswordHash = "$2a$11$oBR8jdAuvUa6AQHMSeJ53.2Ki45cvS32er7HvJ4FJGOqb7kJD6jjC",
-                            Role = 0
-                        });
                 });
 
             modelBuilder.Entity("server.Models.Entities.UserComment", b =>
@@ -404,24 +246,6 @@ namespace server.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserComments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ChargingStationId = 1,
-                            Comment = "Çok hızlı şarj oluyor, lokasyon mükemmel!",
-                            CreatedAt = new DateTime(2024, 1, 15, 16, 0, 0, 0, DateTimeKind.Utc),
-                            UserId = 2
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ChargingStationId = 2,
-                            Comment = "AVM'nin içinde olması çok pratik. Alışveriş yaparken şarj oluyor.",
-                            CreatedAt = new DateTime(2024, 1, 16, 11, 30, 0, 0, DateTimeKind.Utc),
-                            UserId = 4
-                        });
                 });
 
             modelBuilder.Entity("server.Models.Entities.Vehicle", b =>
@@ -452,35 +276,6 @@ namespace server.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Vehicles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Make = "Tesla",
-                            Model = "Model 3",
-                            PlateNumber = "34 ABC 123",
-                            UserId = 2
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Make = "BMW",
-                            Model = "iX3",
-                            PlateNumber = "06 DEF 456",
-                            UserId = 4
-                        });
-                });
-
-            modelBuilder.Entity("server.Models.Entities.AdminLog", b =>
-                {
-                    b.HasOne("server.Models.Entities.User", "Admin")
-                        .WithMany()
-                        .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Admin");
                 });
 
             modelBuilder.Entity("server.Models.Entities.ChargingSession", b =>
