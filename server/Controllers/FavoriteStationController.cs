@@ -44,7 +44,12 @@ namespace server.Controllers
                             f.ChargingStation.Longitude,
                             f.ChargingStation.ProviderId,
                             ProviderName = f.ChargingStation.Provider.Name,
-                            Rate = f.ChargingStation.Provider.PricePerMinute
+                            Provider = new // ✅ Bu kısmı ekleyin
+                            {
+                                Id = f.ChargingStation.Provider.Id,
+                                Name = f.ChargingStation.Provider.Name,
+                                PricePerMinute = f.ChargingStation.Provider.PricePerMinute
+                            }
                         }
                     })
                     .ToListAsync();

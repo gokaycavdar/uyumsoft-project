@@ -1,38 +1,27 @@
-// Models/DTOs/Auth/RegisterDto.cs
+using System.ComponentModel.DataAnnotations;
+
 namespace server.Models.DTOs.Auth
 {
     public class RegisterDto
     {
-        public string FullName { get; set; }
+        [Required(ErrorMessage = "First name is required")]
+        [MaxLength(50, ErrorMessage = "First name cannot exceed 50 characters")]
+        public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "Last name is required")]
+        [MaxLength(50, ErrorMessage = "Last name cannot exceed 50 characters")]
+        public string LastName { get; set; }
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email format")]
+        [MaxLength(255, ErrorMessage = "Email cannot exceed 255 characters")]
         public string Email { get; set; }
+
+        [Required(ErrorMessage = "Password is required")]
+        [MinLength(6, ErrorMessage = "Password must be at least 6 characters")]
         public string Password { get; set; }
-    }
-}
 
-// Models/DTOs/Auth/LoginDto.cs
-namespace server.Models.DTOs.Auth
-{
-    public class LoginDto
-    {
-        public string Email { get; set; }
-        public string Password { get; set; }
-    }
-}
-
-// Models/DTOs/Auth/AuthResponseDto.cs
-namespace server.Models.DTOs.Auth
-{
-    public class AuthResponseDto
-    {
-        public string Token { get; set; }
-        public UserDto User { get; set; }
-    }
-
-    public class UserDto
-    {
-        public int Id { get; set; }
-        public string FullName { get; set; }
-        public string Email { get; set; }
-        public string Role { get; set; }
+        [Required(ErrorMessage = "Password confirmation is required")]
+        public string ConfirmPassword { get; set; }
     }
 }

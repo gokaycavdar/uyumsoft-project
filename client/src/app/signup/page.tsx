@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-hot-toast';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -12,7 +13,6 @@ export default function SignupPage() {
     email: '',
     password: '',
     confirmPassword: '',
-    phone: '',
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,15 +27,19 @@ export default function SignupPage() {
     e.preventDefault();
     
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      toast.error('Password must be at least 6 characters');
       return;
     }
     
     setIsLoading(true);
     
     try {
-      // C# API'ye çağrı yapılacak
-      const response = await fetch('http://localhost:7000/api/auth/register', {
+      const response = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,22 +49,32 @@ export default function SignupPage() {
           lastName: formData.lastName,
           email: formData.email,
           password: formData.password,
-          phone: formData.phone,
-          role: 'user'
+          confirmPassword: formData.confirmPassword
         }),
       });
       
+      const data = await response.json();
+      
       if (response.ok) {
-        const data = await response.json();
-        // Registration successful, redirect to login
-        router.replace('/login?message=Registration successful. Please login.');
+        toast.success('Registration successful! Please login.');
+        router.push('/login?message=Registration successful. Please login.');
       } else {
-        const errorData = await response.json();
-        alert(errorData.message || 'Registration failed');
+        // Backend'den gelen error mesajını göster
+        console.error('Registration error:', data);
+        
+        if (data.message) {
+          toast.error(data.message);
+        } else if (data.errors) {
+          // ModelState validation errors
+          const errorMessages = Object.values(data.errors).flat();
+          toast.error(errorMessages[0] as string);
+        } else {
+          toast.error('Registration failed. Please try again.');
+        }
       }
     } catch (error) {
-      console.error('Registration error:', error);
-      alert('Registration failed');
+      console.error('Network error:', error);
+      toast.error('Network error. Please check your connection and try again.');
     } finally {
       setIsLoading(false);
     }
@@ -94,7 +108,7 @@ export default function SignupPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  First Name
+                  First Name *
                 </label>
                 <input
                   id="firstName"
@@ -109,7 +123,7 @@ export default function SignupPage() {
               </div>
               <div>
                 <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Last Name
+                  Last Name *
                 </label>
                 <input
                   id="lastName"
@@ -125,7 +139,7 @@ export default function SignupPage() {
             </div>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Email address
+                Email address *
               </label>
               <input
                 id="email"
@@ -139,37 +153,24 @@ export default function SignupPage() {
               />
             </div>
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Phone Number <span className="text-gray-400">(Optional)</span>
-              </label>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
-                placeholder="Enter your phone number"
-              />
-            </div>
-            <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Password
+                Password *
               </label>
               <input
                 id="password"
                 name="password"
                 type="password"
                 required
+                minLength={6}
                 value={formData.password}
                 onChange={handleChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white"
-                placeholder="Enter your password"
+                placeholder="Enter your password (min 6 characters)"
               />
             </div>
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Confirm Password
+                Confirm Password *
               </label>
               <input
                 id="confirmPassword"
@@ -212,6 +213,12 @@ export default function SignupPage() {
             >
               {isLoading ? 'Creating account...' : 'Create account'}
             </button>
+          </div>
+
+          <div className="text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Note: Only users can register. Admin and Provider accounts are created by administrators.
+            </p>
           </div>
         </form>
       </div>

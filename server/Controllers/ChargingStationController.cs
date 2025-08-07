@@ -26,19 +26,19 @@ namespace server.Controllers
             try
             {
                 var stations = await _context.ChargingStations
-                    .Include(s => s.Provider)
-                    .Select(s => new
-                    {
-                        s.Id,
-                        s.Location,
-                        s.Latitude,
-                        s.Longitude,
-                        s.ProviderId,
-                        ProviderName = s.Provider.Name,
-                        // ✅ Rate provider'dan gelsin
-                        Rate = s.Provider.PricePerMinute,
-                        // ✅ Gereksiz field'ları kaldır
-                        // Status, ConnectorCount, AvailableConnectors kaldırıldı
+                    .Include(cs => cs.Provider) // ✅ Provider'ı include edin
+                    .Select(cs => new {
+                        Id = cs.Id,
+                        Location = cs.Location,
+                        ProviderId = cs.ProviderId,
+                        ProviderName = cs.Provider.Name,
+                        Latitude = cs.Latitude,
+                        Longitude = cs.Longitude,
+                        Provider = new {
+                            Id = cs.Provider.Id,
+                            Name = cs.Provider.Name,
+                            PricePerMinute = cs.Provider.PricePerMinute
+                        }
                     })
                     .ToListAsync();
 

@@ -3,11 +3,13 @@
     public class Invoice
     {
         public int Id { get; set; }
-
-        public int ChargingSessionId { get; set; }
-        public ChargingSession ChargingSession { get; set; }
-
         public decimal Amount { get; set; }
-    }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        // Foreign Key
+        public int ChargingSessionId { get; set; }
+
+        // ✅ Navigation Property - Bu eksik olabilir
+        public ChargingSession ChargingSession { get; set; } = null!;
+    }
 }

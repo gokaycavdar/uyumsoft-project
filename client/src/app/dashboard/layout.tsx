@@ -1,5 +1,6 @@
 'use client';
 
+import { Toaster } from 'react-hot-toast';
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -180,6 +181,50 @@ export default function UserDashboard({ children }: { children: React.ReactNode 
           {children}
         </main>
       </div>
+
+      {/* ✅ Toast Provider */}
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        gutter={8}
+        containerClassName=""
+        containerStyle={{}}
+        toastOptions={{
+          // Default options
+          className: '',
+          duration: 4000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+          
+          // Success
+          success: {
+            duration: 3000,
+            style: {
+              background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+              color: 'white',
+            },
+            iconTheme: {
+              primary: '#22c55e',
+              secondary: '#fff',
+            },
+          },
+          
+          // Error
+          error: {
+            duration: 4000,
+            style: {
+              background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+              color: 'white',
+            },
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
     </div>
   );
 }
