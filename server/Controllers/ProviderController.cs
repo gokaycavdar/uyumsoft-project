@@ -11,7 +11,7 @@ namespace server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(Roles = "Provider")]
     public class ProviderController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -142,7 +142,7 @@ namespace server.Controllers
         }
 
         [HttpPost("stations")]
-        public async Task<IActionResult> CreateStation([FromBody] CreateStationDto dto)
+        public async Task<IActionResult> CreateStation([FromBody] ProviderCreateStationDto dto)
         {
             try
             {
@@ -192,7 +192,7 @@ namespace server.Controllers
         }
 
         [HttpPut("stations/{id}")]
-        public async Task<IActionResult> UpdateStation(int id, [FromBody] CreateStationDto dto)
+        public async Task<IActionResult> UpdateStation(int id, [FromBody] ProviderCreateStationDto dto)
         {
             try
             {
@@ -282,7 +282,7 @@ namespace server.Controllers
         }
 
         // DTO class
-        public class CreateStationDto
+        public class ProviderCreateStationDto
         {
             [Required]
             public string Location { get; set; } = string.Empty;

@@ -65,7 +65,6 @@ export default function SignupPage() {
         if (data.message) {
           toast.error(data.message);
         } else if (data.errors) {
-          // ModelState validation errors
           const errorMessages = Object.values(data.errors).flat();
           toast.error(errorMessages[0] as string);
         } else {
@@ -73,7 +72,6 @@ export default function SignupPage() {
         }
       }
     } catch (error) {
-      console.error('Network error:', error);
       toast.error('Network error. Please check your connection and try again.');
     } finally {
       setIsLoading(false);

@@ -50,22 +50,6 @@ namespace server.Controllers
             }
         }
 
-        [HttpGet("test-no-auth")]
-        public IActionResult TestNoAuth()
-        {
-            try
-            {
-                var stationCount = _context.ChargingStations.Count();
-                return Ok(new { 
-                    message = "API çalışıyor - Auth yok!", 
-                    stationCount = stationCount,
-                    timestamp = DateTime.Now 
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = ex.Message });
-            }
-        }
+        
     }
 }

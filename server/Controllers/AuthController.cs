@@ -23,93 +23,8 @@ namespace server.Controllers
             _context = context;
             _configuration = configuration;
         }
+    
 
-        // ✅ CORS Test Endpoint'i
-        [HttpGet("ping")]
-        public IActionResult Ping()
-        {
-            return Ok(new { 
-                message = "Backend çalışıyor!", 
-                timestamp = DateTime.UtcNow,
-                cors = "OK"
-            });
-        }
-
-        // ✅ Kullanıcıları listele
-        [HttpGet("users")]
-        public async Task<IActionResult> GetAllUsers()
-        {
-            try
-            {
-                var users = await _context.Users.Select(u => new { 
-                    u.Id,
-                    u.Email, 
-                    u.FullName, 
-                    Role = u.Role.ToString(),
-                    RoleValue = (int)u.Role,
-                    u.CreatedAt
-                }).ToListAsync();
-                
-                return Ok(new {
-                    message = "Tüm kullanıcılar",
-                    count = users.Count(),
-                    users = users
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Kullanıcılar getirilemedi!", error = ex.Message });
-            }
-        }
-
-        // ✅ Provider hesabı oluştur
-        [HttpPost("create-provider")]
-        public async Task<IActionResult> CreateProvider()
-        {
-            try
-            {
-                // Provider hesabı var mı kontrol et
-                if (await _context.Users.AnyAsync(u => u.Email == "provider@test.com"))
-                {
-                    return BadRequest(new { message = "Provider hesabı zaten var!" });
-                }
-                
-                var hashedPassword = BCrypt.Net.BCrypt.HashPassword("123456");
-                
-                var provider = new User
-                {
-                    FullName = "Provider Test",
-                    Email = "provider@test.com",
-                    PasswordHash = hashedPassword,
-                    Role = UserRole.Provider,
-                    CreatedAt = DateTime.UtcNow
-                };
-                
-                _context.Users.Add(provider);
-                await _context.SaveChangesAsync();
-                
-                return Ok(new { 
-                    message = "Provider hesabı oluşturuldu!",
-                    user = new {
-                        provider.Id,
-                        provider.Email,
-                        provider.FullName,
-                        Role = provider.Role.ToString()
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Provider oluşturulamadı!", error = ex.Message });
-            }
-        }
-
-        // ✅ OPTIONS Support
-        [HttpOptions("login")]
-        public IActionResult LoginOptions()
-        {
-            return Ok();
-        }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
@@ -128,11 +43,7 @@ namespace server.Controllers
                     return BadRequest(new { message = "Email already exists" });
                 }
 
-                // Password confirmation kontrolü
-                if (dto.Password != dto.ConfirmPassword)
-                {
-                    return BadRequest(new { message = "Passwords do not match" });
-                }
+                
 
                 // FullName oluştur (FirstName + LastName)
                 var fullName = $"{dto.FirstName.Trim()} {dto.LastName.Trim()}";
@@ -143,7 +54,7 @@ namespace server.Controllers
                     FullName = fullName,
                     Email = dto.Email.ToLower().Trim(),
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                    Role = UserRole.User, // Sadece User rolü
+                    Role = UserRole.User,
                     CreatedAt = DateTime.UtcNow
                 };
 
@@ -223,31 +134,7 @@ namespace server.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        [HttpGet("test")]
-        public async Task<IActionResult> Test()
-        {
-            try
-            {
-                var userCount = await _context.Users.CountAsync();
-                var testUser = await _context.Users.FirstAsync();
-                
-                return Ok(new { 
-                    message = "API çalışıyor!", 
-                    userCount = userCount,
-                    testUser = new { testUser.Email, testUser.FullName }
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = ex.Message });
-            }
-        }
-
-        [HttpPost("test-login")]
-        public async Task<IActionResult> TestLogin([FromBody] object data)
-        {
-            Console.WriteLine($"POST isteği geldi: {data}");
-            return Ok(new { message = "POST isteği başarılı!", receivedData = data });
-        }
     }
+
+    
 }

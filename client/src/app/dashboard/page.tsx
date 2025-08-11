@@ -54,14 +54,7 @@ interface Vehicle {
   userId: number;
 }
 
-interface ChargingSession {
-  id: number;
-  userId: number;
-  vehicleId: number;
-  chargingStationId: number;
-  startTime: string;
-  endTime: string;
-}
+
 
 interface Comment {
   id: number;
@@ -240,10 +233,10 @@ export default function StationsMapPage() {
     }
   };
 
-  // ✅ Modal'dan favori istasyona git - Map'i reset et
+
   const goToFavorite = (station: ChargingStation) => {
     setMapCenter([station.latitude, station.longitude]);
-    setMapKey(prev => prev + 1); // Map'i yeniden oluştur
+    setMapKey(prev => prev + 1); 
     setShowFavoritesModal(false);
   };
 

@@ -5,11 +5,10 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 
-// ✅ Backend'le uyumlu interface
 interface UserInfo {
   id: number;
   email: string;
-  fullName: string;  // ← firstName, lastName yerine
+  fullName: string;  
   role: string;
 }
 

@@ -827,25 +827,6 @@ namespace server.Controllers
             }
         }
 
-        [HttpPost("test-log")]
-        public async Task<IActionResult> CreateTestLog()
-        {
-            try
-            {
-                await LogAdminAction("Test log created manually");
-                return Ok(new { message = "Test log created" });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Error creating test log", error = ex.Message });
-            }
-        }
-
-        // Get current user ID from JWT token
-        private int GetCurrentUserId()
-        {
-            var userIdClaim = User.FindFirst("userId")?.Value;
-            return int.TryParse(userIdClaim, out var userId) ? userId : 0;
-        }
+        
     }
 }

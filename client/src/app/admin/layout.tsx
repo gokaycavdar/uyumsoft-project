@@ -75,25 +75,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   ];
 
   useEffect(() => {
-    console.log('🔍 Admin panel kontrol ediliyor...');
     
     const token = localStorage.getItem('token');
     const userRole = localStorage.getItem('userRole');
     const storedUserInfo = localStorage.getItem('userInfo');
 
-    console.log('📦 localStorage:', { 
-      hasToken: !!token, 
-      userRole,
-      expectedRole: 'Admin' 
-    });
 
     if (!token) {
-      console.log('❌ Token yok, login\'e yönlendiriliyor...');
       router.replace('/login');
       return;
     }
 
-    // Role kontrolü - "Admin" büyük harfle
     if (userRole !== 'Admin') {
       console.log('❌ Admin değil, başka panele yönlendiriliyor...', userRole);
       if (userRole === 'User') {
@@ -106,11 +98,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       return;
     }
 
-    console.log('✅ Admin yetkisi doğrulandı');
 
     if (storedUserInfo) {
       const parsed = JSON.parse(storedUserInfo);
-      console.log('✅ Admin bilgileri:', parsed);
       setUserInfo(parsed);
     }
     setIsLoading(false);
