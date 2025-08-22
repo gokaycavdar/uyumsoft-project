@@ -55,6 +55,22 @@ dotnet run
 ```
 API varsayılan: http://localhost:5000
 
+### Endpoints
+
+<img width="1910" height="952" alt="image" src="https://github.com/user-attachments/assets/7e865118-2966-47fc-9dfe-b3c72c6458ab" />
+
+<img width="1907" height="877" alt="image" src="https://github.com/user-attachments/assets/297537e3-464a-447d-ba5a-1d4851197967" />
+
+<img width="1915" height="963" alt="image" src="https://github.com/user-attachments/assets/2b7f3572-1bf9-4908-874a-4ffdd4beeeb4" />
+
+<img width="1917" height="823" alt="image" src="https://github.com/user-attachments/assets/a23c8c20-6136-4f64-8959-cd1dc71e9b23" />
+
+<img width="1909" height="945" alt="image" src="https://github.com/user-attachments/assets/172260cd-7aab-42db-bd67-ad83b055e20b" />
+
+
+
+
+
 ## Deployment
 - Proje localde çalışacak şekilde yapılandırılmıştır
 - İsteğe bağlı olarak bulut sunuculara deploy edilebilir
